@@ -18,7 +18,7 @@ IMAGE_FORMATS = ('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')
 # Ensure folders exist
 os.makedirs(upload_folder, exist_ok=True)
 os.makedirs(result_folder, exist_ok=True)
-
+torch.set_num_threads(12)
 # Set device to CPU
 device = torch.device('cpu')
 print('Running on device:', device)
@@ -28,6 +28,10 @@ model_scale = 2
 model = RealESRGAN(device, scale=model_scale)
 model.load_weights(f'weights/RealESRGAN_x{model_scale}.pth')
 
+
+@app.route("/", methods=["GET"])
+def no_file_provided():
+    return jsonify({"error": "No file provided"}), 400
 
 def image_to_tar_format(img, image_name):
     buff = BytesIO()
@@ -111,4 +115,4 @@ def upscale_image():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(port=5000)
